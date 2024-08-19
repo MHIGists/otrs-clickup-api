@@ -1,0 +1,22 @@
+//CustomerFooter.tt
+<script>
+    function collectTicketIds() {
+        let ticketLinks = document.getElementsByClassName('MasterActionLink');
+        let ticketIds = [];
+
+        for (let i = 0; i < ticketLinks.length; i++) {
+            ticketIds.push(ticketLinks[i].innerHTML);
+        }
+
+        return ticketIds;
+    }
+    $.ajax({
+        url: "http://10.1.13.40:8080/updateTicketTask.php",
+        type: "POST",
+        data: {
+            ticketIDS: collectTicketIds()
+        },
+        dataType: "json"
+    });
+</script>
+

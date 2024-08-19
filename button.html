@@ -1,0 +1,59 @@
+//AgentTicketZoom.tt
+<button style="padding-inline: 10px;margin: auto;background: linear-gradient(90deg, #7B1FA2, #4A148C); color: #FFF; border: none; padding: 10px 20px; border-radius: 5px;"
+        onclick=''>Add to clickup
+</button>
+<script>
+    function getTicketID() {
+        let inputElements = document.getElementsByTagName("input");
+        let ticketIDInputElement;
+
+        for (let inputElement of inputElements) {
+            if (inputElement.name === "TicketID") {
+                ticketIDInputElement = inputElement;
+                break;
+            }
+        }
+
+        return ticketIDInputElement;
+    }
+    function submitTicket(){
+        let ticketID = getTicketID();
+        $.ajax({
+            url: "http://10.1.13.40:8080/submit.php",
+            type: "POST",
+            data: {
+                taskName: document.getElementsByTagName("h1")[0].innerText,
+                otrs_ticket_id: ticketID.value,
+                info: document.getElementsByTagName("Iframe")[1].contentWindow.document.body.innerText
+            },
+            dataType: "json",
+            success: function (data) {
+                // Handle the response data
+                if (data["success"] === true) {
+                    alert("Task submitted to clickup server");
+                }
+                if (data["success"] === "exists") {
+                    alert("Task already exists in clickUP");
+                }
+                if (data["success"] === false) {
+                    alert("We are having trouble connecting to clickUP servers. Please try again later");
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert("Something went wrong, please try again later.");
+                $.ajax({
+                    url: "http://10.1.13.40:8080/submit.php",
+                    type: "POST",
+                    data: {
+                        clientError: true,
+                        jqXHR: jqXHR,
+                        textStatus: textStatus,
+                        errorThrown: errorThrown
+                    },
+                    dataType: "json"
+                });
+            }
+        });
+    }
+
+</script>
